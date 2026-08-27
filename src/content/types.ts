@@ -15,6 +15,15 @@ export type Product = {
   overview: string;
   benefits: string[];
   applications: string[];
+  zh: {
+    name: string;
+    category: string;
+    tagline: string;
+    overview: string;
+    benefits: string[];
+    applications: string[];
+    specifications: Array<{ label: string; value: string }>;
+  };
   heroImage: ImageAsset;
   gallery: ImageAsset[];
   specifications: Array<{ label: string; value: string }>;
@@ -33,6 +42,13 @@ export type Solution = {
   overview: string;
   challenges: string[];
   benefits: string[];
+  zh: {
+    name: string;
+    eyebrow: string;
+    overview: string;
+    challenges: string[];
+    benefits: string[];
+  };
   productSlugs: string[];
   image: ImageAsset;
   seoTitle: string;
@@ -50,6 +66,15 @@ export type Project = {
   completionYear?: string;
   summary: string;
   description: string;
+  zh: {
+    title: string;
+    country: string;
+    city: string;
+    buildingType: string;
+    elevatorTypes: string[];
+    summary: string;
+    description: string;
+  };
   images: ImageAsset[];
   seoTitle: string;
   seoDescription: string;

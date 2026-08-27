@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { LanguageProvider } from "@/components/language-provider";
 import { siteConfig } from "@/content/site";
 import "./globals.css";
 
@@ -22,5 +23,5 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#f2f0eb", colorScheme: "light" };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en"><body><LanguageProvider>{children}</LanguageProvider></body></html>;
 }

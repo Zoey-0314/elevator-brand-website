@@ -22,7 +22,7 @@ body {
   overflow-x: hidden;
   background: var(--paper);
   color: var(--ink);
-  font-family: "Helvetica Neue", "Nimbus Sans L", Arial, sans-serif;
+  font-family: "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Nimbus Sans L", Arial, sans-serif;
   text-rendering: optimizeLegibility;
 }
 
@@ -48,9 +48,22 @@ img {
 }
 
 .display {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Georgia, "Noto Serif SC", "Songti SC", SimSun, "Times New Roman", serif;
   font-weight: 400;
   letter-spacing: -0.045em;
+}
+
+html[lang="zh-CN"] .display {
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+html[lang="zh-CN"] .eyebrow,
+html[lang="zh-CN"] .button-dark,
+html[lang="zh-CN"] .button-light,
+html[lang="zh-CN"] .button-outline,
+html[lang="zh-CN"] .link-arrow {
+  letter-spacing: 0.08em;
 }
 
 .eyebrow {

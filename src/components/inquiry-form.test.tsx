@@ -9,9 +9,15 @@ vi.mock("next/script", () => ({
 }));
 
 import { InquiryForm } from "./inquiry-form";
+import { LanguageProvider } from "./language-provider";
+
+function renderForm(props: React.ComponentProps<typeof InquiryForm>) {
+  return render(<LanguageProvider><InquiryForm {...props} /></LanguageProvider>);
+}
 
 describe("InquiryForm", () => {
   beforeEach(() => {
+    window.localStorage.clear();
     vi.stubEnv("NEXT_PUBLIC_TURNSTILE_SITE_KEY", "test-site-key");
     window.turnstile = {
       render: vi.fn((_target: HTMLElement, options: Record<string, unknown>) => { queueMicrotask(() => (options.callback as (token: string) => void)("verified-token")); return "widget-1"; }),
@@ -22,7 +28,7 @@ describe("InquiryForm", () => {
   it("renders an accessible success state after an accepted submission", async () => {
     const user = userEvent.setup();
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ accepted: true, message: "Your inquiry has been received.", inquiryId: "fcd7ec3f-930a-4d06-8744-41c393d1a6b8" }), { status: 201 })));
-    render(<InquiryForm initialProduct="Passenger Elevator" sourcePage="/products/passenger-elevator" />);
+    renderForm({ initialProduct: "Passenger Elevator", sourcePage: "/products/passenger-elevator" });
     await user.type(screen.getByLabelText(/Name/), "Ada Builder");
     await user.type(screen.getByLabelText(/Email/), "ada@example.com");
     await user.type(screen.getByLabelText(/Country/), "Canada");
@@ -36,7 +42,7 @@ describe("InquiryForm", () => {
   it("announces a server validation error and keeps the form available", async () => {
     const user = userEvent.setup();
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ accepted: false, message: "Review the highlighted fields.", fieldErrors: { message: ["Please include at least 20 characters."] } }), { status: 422 })));
-    render(<InquiryForm sourcePage="/contact" />);
+    renderForm({ sourcePage: "/contact" });
     await user.type(screen.getByLabelText(/Name/), "Ada Builder");
     await user.type(screen.getByLabelText(/Email/), "ada@example.com");
     await user.type(screen.getByLabelText(/Country/), "Canada");

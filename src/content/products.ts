@@ -79,12 +79,79 @@ const definitions: Array<
   },
 ];
 
+const productZh: Record<string, Product["zh"]> = {
+  "passenger-elevator": {
+    name: "乘客电梯",
+    category: "人员运输",
+    tagline: "从容连接每一个楼层。",
+    overview: "面向住宅与商业建筑的项目定制型乘客电梯方案，兼顾交通规划、轿厢内装协调与无障碍操作。",
+    benefits: ["项目专属规划", "轿厢饰面协调", "无障碍界面选项", "全生命周期文档"],
+    applications: ["住宅塔楼", "办公楼", "综合体", "教育建筑"],
+    specifications: [],
+  },
+  "home-elevator": {
+    name: "家用电梯",
+    category: "私人住宅",
+    tagline: "安静融入居家生活的垂直舒适。",
+    overview: "围绕私人室内空间、场地限制和日常生活节奏进行协调的住宅垂直交通方案。",
+    benefits: ["室内设计导向协调", "紧凑型规划选项", "简洁日常操作", "多样化材质选择"],
+    applications: ["别墅", "联排住宅", "复式公寓", "私人住宅"],
+    specifications: [],
+  },
+  "hospital-elevator": {
+    name: "医用电梯",
+    category: "医疗运输",
+    tagline: "围绕医疗照护规划每一次移动。",
+    overview: "面向医疗场景的配置框架，重点考虑病床运输、耐用内装、清晰控制和运营流程协调。",
+    benefits: ["流程导向规划", "耐用饰面选项", "清晰控制布局", "交付文档"],
+    applications: ["医院", "诊所", "护理机构", "医疗园区"],
+    specifications: [],
+  },
+  "freight-elevator": {
+    name: "载货电梯",
+    category: "货物运输",
+    tagline: "为高强度运输路线提供可靠承载。",
+    overview: "围绕装载方式、门区协调、耐用饰面及建筑运营计划配置的货物运输平台。",
+    benefits: ["荷载路线协调", "耐用饰面选项", "门区规划", "维保通道策略"],
+    applications: ["仓库", "工厂", "商业后勤区", "物流设施"],
+    specifications: [],
+  },
+  "panoramic-elevator": {
+    name: "观光电梯",
+    category: "建筑交通",
+    tagline: "让垂直移动成为建筑的一部分。",
+    overview: "与立面、中庭或公共室内空间协同设计的透明垂直交通方案，使工程与体验形成统一表达。",
+    benefits: ["建筑导向设计", "玻璃系统协调", "材质细节设计", "公共空间融合"],
+    applications: ["酒店", "商业中庭", "文化场馆", "商业大堂"],
+    specifications: [],
+  },
+  escalator: {
+    name: "自动扶梯",
+    category: "连续客流",
+    tagline: "持续运送，与空间协调统一。",
+    overview: "面向连续客流的规划型自动扶梯方案，关注流线、接口、饰面和维保通道。",
+    benefits: ["流线规划", "接口协调", "饰面选择", "维保通道"],
+    applications: ["零售商业", "交通枢纽", "会展场馆", "公共建筑"],
+    specifications: [],
+  },
+};
+
+const specificationsZh = [
+  { label: "应用场景", value: "按项目需求配置" },
+  { label: "额定载重", value: "由工程选型确认" },
+  { label: "额定速度", value: "由交通分析确认" },
+  { label: "开门方式", value: "根据项目确定" },
+  { label: "饰面", value: "项目定制材质方案" },
+  { label: "规范与标准", value: "按安装所在地确认" },
+];
+
 export const products: Product[] = definitions.map((product, index) => ({
   ...product,
   id: `product-${index + 1}`,
   index: String(index + 1).padStart(2, "0"),
   heroImage: product.slug === "panoramic-elevator" || product.slug === "escalator" ? atrium : hero,
   gallery: [hero, atrium],
+  zh: { ...productZh[product.slug], specifications: specificationsZh },
   specifications: [
     { label: "Application", value: "Configured to project brief" },
     { label: "Rated load", value: "To be confirmed by engineering selection" },

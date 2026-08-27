@@ -8,7 +8,7 @@ Production-oriented international B2B elevator website for Europe and North Amer
 
 - Required marketing routes for products, solutions, projects, about, quality, service, contact, privacy, and terms.
 - Reusable typed records for six product families, six sector solutions, and project references.
-- Responsive navigation, accessible forms, SEO metadata, structured data, sitemap, and robots rules.
+- Responsive navigation, a persistent English / Simplified Chinese language switch, accessible forms, SEO metadata, structured data, sitemap, and robots rules.
 - `POST /api/inquiries` with strict Zod validation, payload limits, Cloudflare Turnstile Siteverify, Supabase persistence, Resend notification, and safe public errors.
 - Database-first delivery: email is attempted only after a successful insert; notification failure is recorded without deleting the inquiry.
 - Supabase Auth login plus server-side `ADMIN_EMAIL_ALLOWLIST` authorization.
@@ -24,7 +24,7 @@ Production-oriented international B2B elevator website for Europe and North Amer
 - Resend
 - Cloudflare Turnstile
 - Vitest and Testing Library
-- Vercel as the target business hosting environment; OpenAI Sites is also configured for owner-only review deployments
+- Vercel as the target business hosting environment; OpenAI Sites is also configured for public deployments
 
 ## Prerequisites
 
@@ -137,7 +137,7 @@ npm run build:next
 
 ## Production launch checklist
 
-- Replace `.example` emails, address, telephone, WhatsApp, and working hours in `src/content/company.ts`.
+- Confirm the published sales email and telephone in `src/content/company.ts`; no address, personal profile, WhatsApp, or working-hours fields are currently published.
 - Verify and replace all company capability, product specification, certification, project, and service statements.
 - Replace or approve all concept imagery and ensure publication rights for real photography.
 - Obtain qualified legal approval for privacy and terms copy and define retention/deletion procedures.
@@ -151,7 +151,7 @@ npm run build:next
 Business content is centralized under `src/content`:
 
 - `site.ts` — brand, canonical URL, navigation, quote-link context
-- `company.ts` — positioning and single-source contact details
+- `company.ts` — bilingual positioning and the single-source public email/telephone
 - `products.ts` — six reusable product records and specification placeholders
 - `solutions.ts` — six sector records
 - `projects.ts` — explicitly labelled placeholder references
