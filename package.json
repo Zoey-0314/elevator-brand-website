@@ -1,0 +1,50 @@
+{
+  "name": "ns-elevator-website",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.22.2"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "vinext build",
+    "postbuild": "node scripts/prepare-sites-build.mjs",
+    "build:next": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@supabase/ssr": "latest",
+    "@supabase/supabase-js": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "resend": "latest",
+    "server-only": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.54.1",
+    "@tailwindcss/postcss": "latest",
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@testing-library/user-event": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-rsc": "^0.5.34",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "jsdom": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest",
+    "vinext": "^1.0.0-beta.8",
+    "vite": "^8.2.2",
+    "vitest": "latest"
+  },
+  "type": "module"
+}

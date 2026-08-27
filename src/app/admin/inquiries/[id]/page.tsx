@@ -1,0 +1,20 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { AdminBack, AdminHeader, StatusBadge } from "@/components/admin-ui";
+import { requireAdmin } from "@/lib/auth";
+import { createServiceClient } from "@/lib/supabase/service";
+import { inquiryStatuses, type InquiryStatus } from "@/validation/inquiry";
+import { updateInquiryStatus } from "./actions";
+
+export const metadata: Metadata = { title: "Inquiry detail" };
+type Props = { params: Promise<{ id: string }> };
+type Inquiry = { id: string; created_at: string; updated_at: string; name: string; company: string | null; email: string; phone: string | null; country: string; product: string | null; project_type: string | null; quantity: string | null; message: string; source_page: string | null; status: InquiryStatus; email_notification_status: "pending" | "sent" | "failed"; email_notification_error: string | null };
+
+export default async function InquiryDetailPage({ params }: Props) {
+  const user = await requireAdmin(); const { id } = await params;
+  if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+  const { data, error } = await createServiceClient().from("inquiries").select("*").eq("id", id).single();
+  if (error || !data) notFound(); const inquiry = data as Inquiry;
+  const fields = [["Name", inquiry.name], ["Company", inquiry.company], ["Country", inquiry.country], ["Email", inquiry.email], ["Phone / WhatsApp", inquiry.phone], ["Product", inquiry.product], ["Project type", inquiry.project_type], ["Quantity", inquiry.quantity], ["Source page", inquiry.source_page], ["Submitted", new Date(inquiry.created_at).toLocaleString("en")]];
+  return <><AdminHeader email={user.email} /><div className="container-site py-10 md:py-16"><AdminBack /><div className="mt-12 grid gap-12 lg:grid-cols-[1.25fr_0.75fr]"><section><div className="flex flex-wrap items-center gap-3"><StatusBadge status={inquiry.status} /><StatusBadge status={inquiry.email_notification_status} /></div><h1 className="display mt-7 text-5xl md:text-7xl">{inquiry.name}</h1><p className="mt-3 text-sm text-[#706d66]">Inquiry {inquiry.id}</p><div className="mt-10 border-t hairline">{fields.map(([label, value]) => <div key={label} className="grid gap-3 border-b hairline py-5 sm:grid-cols-[0.34fr_0.66fr]"><dt className="text-[0.61rem] font-bold tracking-[0.13em] text-[#77746d] uppercase">{label}</dt><dd className="text-sm break-words">{label === "Email" && value ? <a className="underline" href={`mailto:${value}`}>{value}</a> : label === "Phone / WhatsApp" && value ? <a className="underline" href={`tel:${value}`}>{value}</a> : value || "—"}</dd></div>)}</div><div className="mt-10"><p className="text-[0.61rem] font-bold tracking-[0.13em] text-[#77746d] uppercase">Message</p><p className="mt-5 whitespace-pre-wrap text-base leading-8">{inquiry.message}</p></div></section><aside><div className="bg-[#11110f] p-7 text-white"><p className="eyebrow text-white/50">Progress inquiry</p><form action={updateInquiryStatus} className="mt-8"><input type="hidden" name="id" value={inquiry.id} /><label className="block text-[0.62rem] font-bold uppercase tracking-[0.13em] text-white/60">Status<select name="status" defaultValue={inquiry.status} className="mt-3 w-full border border-white/25 bg-black p-3 text-sm text-white">{inquiryStatuses.map((status) => <option key={status} value={status}>{status}</option>)}</select></label><button className="button-light mt-6 w-full">Update status</button></form></div>{inquiry.email_notification_status === "failed" ? <div className="mt-5 border-l-2 border-[#a63c2f] bg-[#eee5df] p-5"><p className="font-bold">Notification failed after storage.</p><p className="mt-3 text-xs leading-6 text-[#68665f]">The inquiry record remains authoritative. Review server logs or Resend, then follow up manually.</p>{inquiry.email_notification_error ? <details className="mt-4 text-xs"><summary>Admin diagnostic</summary><p className="mt-2 break-words">{inquiry.email_notification_error}</p></details> : null}</div> : null}</aside></div></div></>;
+}
