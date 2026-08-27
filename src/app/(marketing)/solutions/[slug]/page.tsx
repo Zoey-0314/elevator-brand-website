@@ -1,0 +1,18 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Breadcrumbs, ConceptLabel, CtaBand } from "@/components/ui";
+import { products } from "@/content/products";
+import { getSolution, solutions } from "@/content/solutions";
+import { buildQuoteHref } from "@/content/site";
+
+type Props = { params: Promise<{ slug: string }> };
+export function generateStaticParams() { return solutions.map(({ slug }) => ({ slug })); }
+export async function generateMetadata({ params }: Props): Promise<Metadata> { const item = getSolution((await params).slug); return item ? { title: item.seoTitle, description: item.seoDescription, alternates: { canonical: `/solutions/${item.slug}` } } : {}; }
+
+export default async function SolutionDetail({ params }: Props) {
+  const solution = getSolution((await params).slug); if (!solution) notFound();
+  const applicable = products.filter((product) => solution.productSlugs.includes(product.slug));
+  return <><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Solutions", href: "/solutions" }, { label: solution.name }]} /><section className="container-site grid gap-12 border-t hairline pt-12 pb-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-end"><div><p className="eyebrow">{solution.index} / Sector solution</p><h1 className="display mt-9 text-[clamp(4rem,9vw,9rem)] leading-[0.82]">{solution.name}</h1></div><div><p className="display text-3xl">Mobility shaped around how the space works.</p><p className="mt-7 text-sm leading-7 text-[#64625c]">{solution.overview}</p><Link href={buildQuoteHref(undefined, `/solutions/${solution.slug}`)} className="button-dark mt-8">Discuss this sector <span aria-hidden="true">↗</span></Link></div></section><section className="container-site"><div className="relative aspect-[16/8] overflow-hidden"><ConceptLabel /><Image priority src={solution.image.src} alt={solution.image.alt} fill sizes="100vw" className="object-cover" /></div><p className="mt-3 text-xs text-[#77746d]">{solution.image.caption}</p></section><section className="container-site grid gap-16 py-20 md:py-32 lg:grid-cols-2"><div><span className="eyebrow">Project challenges</span><div className="mt-10 border-t hairline">{solution.challenges.map((item, index) => <div key={item} className="flex gap-6 border-b hairline py-6"><span className="text-[0.62rem] font-bold text-[#a96e3e]">{String(index + 1).padStart(2, "0")}</span><h2 className="display text-3xl">{item}</h2></div>)}</div></div><div><span className="eyebrow">Coordinated outcome</span><div className="mt-10 border-t hairline">{solution.benefits.map((item, index) => <div key={item} className="flex gap-6 border-b hairline py-6"><span className="text-[0.62rem] font-bold text-[#a96e3e]">{String(index + 1).padStart(2, "0")}</span><h2 className="display text-3xl">{item}</h2></div>)}</div></div></section><section className="bg-[#dedbd4] py-20 md:py-28"><div className="container-site"><div className="grid gap-8 lg:grid-cols-[0.6fr_1.4fr]"><div><span className="eyebrow">Applicable products</span><h2 className="display mt-8 text-5xl">A configured system, not a catalogue shortcut.</h2></div><div className="border-t hairline">{applicable.map((product) => <Link key={product.id} href={`/products/${product.slug}`} className="group flex items-center justify-between border-b hairline py-6"><div><p className="text-[0.61rem] font-bold tracking-[0.15em] text-[#77746d] uppercase">{product.category}</p><h3 className="display mt-2 text-3xl">{product.name}</h3></div><span className="text-xl transition-transform group-hover:translate-x-1">↗</span></Link>)}</div></div></div></section><CtaBand title={`Plan a ${solution.name.toLowerCase()} project.`} /></>;
+}
