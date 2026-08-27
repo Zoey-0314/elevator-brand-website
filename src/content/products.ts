@@ -14,6 +14,36 @@ const atrium = {
   isConcept: true,
 };
 
+const hospital = {
+  src: "/images/products/hospital-elevator-concept.png",
+  alt: "Concept visualization of a hospital elevator in a contemporary healthcare corridor",
+  caption: "Original concept visualization — not a completed NS Elevator project.",
+  isConcept: true,
+};
+
+const freight = {
+  src: "/images/products/freight-elevator-concept.png",
+  alt: "Concept visualization of a freight elevator in a modern logistics facility",
+  caption: "Original concept visualization — not a completed NS Elevator project.",
+  isConcept: true,
+};
+
+const escalator = {
+  src: "/images/products/escalator-concept.png",
+  alt: "Concept visualization of an escalator in a contemporary public atrium",
+  caption: "Original concept visualization — not a completed NS Elevator project.",
+  isConcept: true,
+};
+
+const productHeroImages: Record<string, Product["heroImage"]> = {
+  "passenger-elevator": hero,
+  "home-elevator": hero,
+  "hospital-elevator": hospital,
+  "freight-elevator": freight,
+  "panoramic-elevator": atrium,
+  escalator,
+};
+
 const definitions: Array<
   Pick<Product, "slug" | "name" | "category" | "tagline" | "overview" | "benefits" | "applications">
 > = [
@@ -149,7 +179,7 @@ export const products: Product[] = definitions.map((product, index) => ({
   ...product,
   id: `product-${index + 1}`,
   index: String(index + 1).padStart(2, "0"),
-  heroImage: product.slug === "panoramic-elevator" || product.slug === "escalator" ? atrium : hero,
+  heroImage: productHeroImages[product.slug],
   gallery: [hero, atrium],
   zh: { ...productZh[product.slug], specifications: specificationsZh },
   specifications: [

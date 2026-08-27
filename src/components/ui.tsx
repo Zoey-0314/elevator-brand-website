@@ -50,7 +50,11 @@ export function ProductCard({ product, featured = false }: { product: Product; f
           <Image src={product.heroImage.src} alt={product.heroImage.alt} fill sizes={featured ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"} className="object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
         </div>
         <div className="flex items-start justify-between gap-4 pt-5">
-          <div><p className="text-[0.62rem] font-bold tracking-[0.16em] text-[#8a877f] uppercase">{product.index} / <T en={product.category} zh={product.zh.category} /></p><h3 className="display mt-2 text-3xl"><T en={product.name} zh={product.zh.name} /></h3></div>
+          <div>
+            <p className="text-[0.62rem] font-bold tracking-[0.16em] text-[#8a877f] uppercase">{product.index} / <T en={product.category} zh={product.zh.category} /></p>
+            <h3 className="display mt-2 text-3xl"><T en={product.name} zh={product.zh.name} /></h3>
+            <p className="mt-3 max-w-sm text-sm leading-6 text-[#66645e]"><T en={product.tagline} zh={product.zh.tagline} /></p>
+          </div>
           <span aria-hidden="true" className="mt-2 text-xl transition-transform group-hover:translate-x-1">↗</span>
         </div>
       </Link>
