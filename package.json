@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "vinext build",
+    "postbuild": "node scripts/prepare-sites-build.mjs",
     "build:next": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -26,7 +27,9 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.54.1",
     "@tailwindcss/postcss": "latest",
+    "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",
     "@testing-library/user-event": "latest",
@@ -40,6 +43,8 @@
     "tailwindcss": "latest",
     "typescript": "latest",
     "vinext": "^1.0.0-beta.8",
+    "vite": "^8.2.2",
     "vitest": "latest"
-  }
+  },
+  "type": "module"
 }
