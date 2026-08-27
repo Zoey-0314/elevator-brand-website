@@ -13,7 +13,9 @@ export const inquirySchema = z.object({
   quantity: optionalText(80),
   message: z.string().trim().min(20, "Please include at least 20 characters.").max(4000, "Message is too long."),
   privacyConsent: z.boolean().refine(Boolean, "Consent is required."),
-  turnstileToken: z.string().trim().min(1, "Complete the security check.").max(2048),
+  turnstileToken: z.string().trim().max(2048).optional().or(z.literal("")),
+  website: optionalText(200),
+  formStartedAt: z.number().int().positive(),
   sourcePage: optionalText(500),
 }).strict();
 

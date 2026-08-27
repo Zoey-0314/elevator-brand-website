@@ -90,13 +90,15 @@ The public browser client cannot directly read, insert, or update inquiry rows.
 4. Keep customer confirmations disabled until sender reputation, copy, and support workflow are approved.
 5. A failed notification leaves the Supabase row intact and sets `email_notification_status = 'failed'`; the admin detail view exposes the admin-only diagnostic.
 
-## Turnstile setup
+## Turnstile setup and Mainland China fallback
 
 1. Create separate development/preview and production widgets when practical.
 2. Add `localhost`, the preview hostname, and the final production hostname to the appropriate widget configuration.
 3. Set the public site key and server-only secret for each environment.
 4. Set `TURNSTILE_EXPECTED_HOSTNAME` in production. The server also validates the `inquiry` action.
 5. Tokens are treated as short-lived and single-use; the client resets the widget after each attempt.
+
+Cloudflare documents that Turnstile is not supported in Mainland China. When the widget cannot load, the inquiry form therefore falls back to server-side validation, a hidden honeypot, minimum completion time, payload limits, and per-instance rate limiting. If a Turnstile token is present, it is still always verified server-side. This is a deliberate availability tradeoff requested for Mainland China visitors; use a shared rate-limit store if abuse protection must be stronger.
 
 ## Rate limiting
 

@@ -13,6 +13,8 @@ export const validInquiry = {
   message: "We are planning a residential tower and need early-stage product guidance.",
   privacyConsent: true,
   turnstileToken: "verified-token",
+  website: "",
+  formStartedAt: Date.now() - 10_000,
   sourcePage: "/products/passenger-elevator",
 };
 

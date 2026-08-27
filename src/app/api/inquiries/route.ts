@@ -33,6 +33,6 @@ export async function POST(request: NextRequest) {
   });
 
   if (result.accepted) return NextResponse.json({ ...result, message: "Your inquiry has been received." }, { status: 201 });
-  const messages = { VALIDATION_FAILED: "Review the highlighted fields.", TURNSTILE_FAILED: "The security check could not be verified.", RATE_LIMITED: "Please wait before sending another inquiry.", DATABASE_UNAVAILABLE: "We could not save the inquiry. Please try again later." } as const;
+  const messages = { VALIDATION_FAILED: "Review the highlighted fields.", TURNSTILE_FAILED: "The security check could not be verified.", BOT_CHECK_FAILED: "Please wait a moment, then try again.", RATE_LIMITED: "Please wait before sending another inquiry.", DATABASE_UNAVAILABLE: "We could not save the inquiry. Please try again later." } as const;
   return NextResponse.json({ ...result, message: messages[result.code] }, { status: result.status, headers: result.code === "RATE_LIMITED" ? { "Retry-After": String(result.retryAfter) } : undefined });
 }

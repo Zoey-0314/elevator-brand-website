@@ -3,6 +3,7 @@ import { inquirySchema, normalizeInquiry, type InquiryInput } from "@/validation
 export type StoredInquiry = ReturnType<typeof normalizeInquiry> & { id: string; created_at: string };
 export type InquiryDependencies = {
   verifyTurnstile: (token: string) => Promise<boolean>;
+  now?: () => number;
   allowRequest?: () => { allowed: boolean; retryAfter: number };
   insertInquiry: (input: ReturnType<typeof normalizeInquiry>) => Promise<{ id: string; created_at: string }>;
   sendBusinessNotification: (inquiry: StoredInquiry) => Promise<void>;
@@ -15,6 +16,7 @@ export type InquiryResult =
   | { accepted: true; code: "INQUIRY_STORED"; inquiryId: string }
   | { accepted: false; code: "VALIDATION_FAILED"; status: 422; fieldErrors: Record<string, string[]> }
   | { accepted: false; code: "TURNSTILE_FAILED"; status: 400 }
+  | { accepted: false; code: "BOT_CHECK_FAILED"; status: 400 }
   | { accepted: false; code: "RATE_LIMITED"; status: 429; retryAfter: number }
   | { accepted: false; code: "DATABASE_UNAVAILABLE"; status: 503 };
 
@@ -22,12 +24,22 @@ export async function processInquiry(payload: unknown, deps: InquiryDependencies
   const parsed = inquirySchema.safeParse(payload);
   if (!parsed.success) return { accepted: false, code: "VALIDATION_FAILED", status: 422, fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]> };
 
-  let verified = false;
-  try { verified = await deps.verifyTurnstile(parsed.data.turnstileToken); } catch (error) { deps.log?.("turnstile_error", { error: error instanceof Error ? error.message : "unknown" }); }
-  if (!verified) return { accepted: false, code: "TURNSTILE_FAILED", status: 400 };
-
   const limit = deps.allowRequest?.();
   if (limit && !limit.allowed) return { accepted: false, code: "RATE_LIMITED", status: 429, retryAfter: limit.retryAfter };
+
+  const token = parsed.data.turnstileToken?.trim();
+  if (token) {
+    let verified = false;
+    try { verified = await deps.verifyTurnstile(token); } catch (error) { deps.log?.("turnstile_error", { error: error instanceof Error ? error.message : "unknown" }); }
+    if (!verified) return { accepted: false, code: "TURNSTILE_FAILED", status: 400 };
+  } else {
+    const elapsed = (deps.now?.() ?? Date.now()) - parsed.data.formStartedAt;
+    if (parsed.data.website || elapsed < 3_000 || elapsed > 7_200_000) {
+      deps.log?.("inquiry_fallback_bot_check_failed", { honeypot: Boolean(parsed.data.website), elapsed });
+      return { accepted: false, code: "BOT_CHECK_FAILED", status: 400 };
+    }
+    deps.log?.("inquiry_turnstile_unavailable_fallback", {});
+  }
 
   const normalized = normalizeInquiry(parsed.data as InquiryInput);
   let receipt: { id: string; created_at: string };
