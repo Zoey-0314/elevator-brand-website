@@ -28,6 +28,20 @@ describe("processInquiry", () => {
     expect(deps.insertInquiry).not.toHaveBeenCalled();
   });
 
+  it("accepts a human-paced fallback when Turnstile is unavailable", async () => {
+    const deps = dependencies({ now: () => validInquiry.formStartedAt + 10_000 });
+    const result = await processInquiry({ ...validInquiry, turnstileToken: "" }, deps);
+    expect(result).toMatchObject({ accepted: true, code: "INQUIRY_STORED" });
+    expect(deps.verifyTurnstile).not.toHaveBeenCalled();
+  });
+
+  it("rejects the fallback honeypot and submissions that are too fast", async () => {
+    const deps = dependencies({ now: () => validInquiry.formStartedAt + 1_000 });
+    expect(await processInquiry({ ...validInquiry, turnstileToken: "", website: "spam" }, deps)).toMatchObject({ accepted: false, code: "BOT_CHECK_FAILED" });
+    expect(await processInquiry({ ...validInquiry, turnstileToken: "", website: "" }, deps)).toMatchObject({ accepted: false, code: "BOT_CHECK_FAILED" });
+    expect(deps.insertInquiry).not.toHaveBeenCalled();
+  });
+
   it("returns a database failure without sending email", async () => {
     const deps = dependencies({ insertInquiry: vi.fn().mockRejectedValue(new Error("database offline")) });
     expect(await processInquiry(validInquiry, deps)).toMatchObject({ accepted: false, code: "DATABASE_UNAVAILABLE" });

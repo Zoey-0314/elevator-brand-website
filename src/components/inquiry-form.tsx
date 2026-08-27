@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useCallback, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { products } from "@/content/products";
 import { useLanguage } from "./language-provider";
 
@@ -23,13 +23,16 @@ export function InquiryForm({ initialProduct = "", sourcePage }: Props) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const widgetTarget = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | undefined>(undefined);
+  const formStartedAt = useRef(0);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileUnavailable, setTurnstileUnavailable] = useState(false);
   const [state, setState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [reference, setReference] = useState("");
   const copy = isZh ? {
     securityError: "安全验证未能加载，请刷新页面后重试。",
+    securityFallback: "安全验证在当前网络不可用，您仍可提交询盘。",
     submitError: "询盘未能提交。",
     success: "您的询盘已收到。",
     networkError: "暂时无法连接询盘服务，请稍后重试。",
@@ -61,6 +64,7 @@ export function InquiryForm({ initialProduct = "", sourcePage }: Props) {
     required: "标有 * 的字段为必填项。有效询盘会先保存，再发送邮件通知。",
   } : {
     securityError: "The security check could not load. Please refresh and try again.",
+    securityFallback: "The security check is unavailable on this network. You can still submit your inquiry.",
     submitError: "The inquiry could not be submitted.",
     success: "Your inquiry has been received.",
     networkError: "The inquiry service could not be reached. Please try again.",
@@ -98,11 +102,21 @@ export function InquiryForm({ initialProduct = "", sourcePage }: Props) {
       sitekey: siteKey,
       action: "inquiry",
       theme: "light",
-      callback: (token: string) => setTurnstileToken(token),
+      callback: (token: string) => { setTurnstileToken(token); setTurnstileUnavailable(false); },
       "expired-callback": () => setTurnstileToken(""),
-      "error-callback": () => { setTurnstileToken(""); setMessage(copy.securityError); setState("error"); },
+      "error-callback": () => { setTurnstileToken(""); setTurnstileUnavailable(true); },
     });
-  }, [copy.securityError, siteKey]);
+  }, [siteKey]);
+
+  useEffect(() => {
+    if (!formStartedAt.current) formStartedAt.current = Date.now();
+  }, []);
+
+  useEffect(() => {
+    if (!siteKey) return;
+    const timer = window.setTimeout(() => { if (!turnstileToken) setTurnstileUnavailable(true); }, 6_000);
+    return () => window.clearTimeout(timer);
+  }, [siteKey, turnstileToken]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -111,7 +125,7 @@ export function InquiryForm({ initialProduct = "", sourcePage }: Props) {
     const data = new FormData(form);
     setState("submitting"); setMessage(""); setFieldErrors({});
     const payload = {
-      name: data.get("name"), company: data.get("company"), email: data.get("email"), phone: data.get("phone"), country: data.get("country"), product: data.get("product"), projectType: data.get("projectType"), quantity: data.get("quantity"), message: data.get("message"), privacyConsent: data.get("privacyConsent") === "on", turnstileToken, sourcePage,
+      name: data.get("name"), company: data.get("company"), email: data.get("email"), phone: data.get("phone"), country: data.get("country"), product: data.get("product"), projectType: data.get("projectType"), quantity: data.get("quantity"), message: data.get("message"), privacyConsent: data.get("privacyConsent") === "on", turnstileToken, website: data.get("website"), formStartedAt: formStartedAt.current, sourcePage,
     };
     try {
       const response = await fetch("/api/inquiries", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
@@ -131,6 +145,7 @@ export function InquiryForm({ initialProduct = "", sourcePage }: Props) {
   return (
     <form onSubmit={submit} noValidate aria-busy={state === "submitting"}>
       {siteKey ? <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" strategy="afterInteractive" onReady={mountTurnstile} /> : null}
+      <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true"><label>Website<input name="website" type="text" tabIndex={-1} autoComplete="off" /></label></div>
       <div className="grid gap-x-8 gap-y-8 md:grid-cols-2">
         <Field label={copy.name} name="name" required error={errorFor("name")} autoComplete="name" />
         <Field label={copy.company} name="company" error={errorFor("company")} autoComplete="organization" />
@@ -143,7 +158,7 @@ export function InquiryForm({ initialProduct = "", sourcePage }: Props) {
       </div>
       <label className="mt-9 block"><span className="text-[0.65rem] font-bold tracking-[0.13em] uppercase">{copy.projectMessage} <span aria-hidden="true">*</span></span><textarea name="message" className="field" required minLength={20} maxLength={4000} aria-invalid={Boolean(errorFor("message"))} aria-describedby={errorFor("message") ? "message-error" : "message-help"} placeholder={copy.messagePlaceholder} /><span id="message-help" className="mt-2 block text-xs text-[#85827a]">{copy.sensitive}</span>{errorFor("message") ? <FieldError id="message-error">{errorFor("message")}</FieldError> : null}</label>
       <label className="mt-7 flex items-start gap-3 text-sm leading-6"><input type="checkbox" name="privacyConsent" className="mt-1 h-4 w-4 accent-[#11110f]" aria-invalid={Boolean(errorFor("privacyConsent"))} aria-describedby={errorFor("privacyConsent") ? "privacy-error" : undefined} /><span>{copy.consentPrefix} <a className="underline underline-offset-4" href="/privacy">{copy.privacy}</a>. <span aria-hidden="true">*</span></span></label>{errorFor("privacyConsent") ? <FieldError id="privacy-error">{errorFor("privacyConsent")}</FieldError> : null}
-      <div className="mt-8 min-h-[74px]" aria-label={copy.security}>{siteKey ? <div ref={widgetTarget} /> : <div className="border border-[#b26a42] bg-[#eadcd0] p-4 text-sm leading-6"><strong>{copy.preview}</strong> {copy.disabled}</div>}{errorFor("turnstileToken") ? <FieldError id="turnstile-error">{errorFor("turnstileToken")}</FieldError> : null}</div>
+      <div className="mt-8 min-h-[74px]" aria-label={copy.security}>{siteKey ? <><div ref={widgetTarget} className={turnstileUnavailable ? "hidden" : undefined} />{turnstileUnavailable ? <div className="border border-[#9b8a61] bg-[#eee9dc] p-4 text-sm leading-6">{copy.securityFallback}</div> : null}</> : <div className="border border-[#b26a42] bg-[#eadcd0] p-4 text-sm leading-6"><strong>{copy.preview}</strong> {copy.disabled}</div>}{errorFor("turnstileToken") ? <FieldError id="turnstile-error">{errorFor("turnstileToken")}</FieldError> : null}</div>
       {message ? <div role="alert" aria-live="assertive" className="mt-6 border-l-2 border-[#a63c2f] bg-[#eee5df] p-4 text-sm">{message}</div> : null}
       <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><button type="submit" disabled={state === "submitting" || !siteKey} className="button-dark min-w-52 disabled:cursor-not-allowed disabled:opacity-45">{state === "submitting" ? copy.sending : copy.send} <span aria-hidden="true">↗</span></button><p className="text-xs text-[#7d7a73]">{copy.required}</p></div>
     </form>
