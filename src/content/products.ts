@@ -15,21 +15,21 @@ const atrium = {
 };
 
 const hospital = {
-  src: "/images/products/hospital-elevator-concept.png",
+  src: "/images/products/hospital-elevator-concept-v2.png",
   alt: "Concept visualization of a hospital elevator in a contemporary healthcare corridor",
   caption: "Original concept visualization — not a completed NS Elevator project.",
   isConcept: true,
 };
 
 const freight = {
-  src: "/images/products/freight-elevator-concept.png",
+  src: "/images/products/freight-elevator-concept-v2.png",
   alt: "Concept visualization of a freight elevator in a modern logistics facility",
   caption: "Original concept visualization — not a completed NS Elevator project.",
   isConcept: true,
 };
 
 const escalator = {
-  src: "/images/products/escalator-concept.png",
+  src: "/images/products/escalator-concept-v2.png",
   alt: "Concept visualization of an escalator in a contemporary public atrium",
   caption: "Original concept visualization — not a completed NS Elevator project.",
   isConcept: true,
