@@ -109,9 +109,10 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run build:next
 ```
 
-Provider network calls are mocked in automated tests. A real integration smoke test requires non-production provider credentials.
+`npm run build` produces the Sites-compatible vinext `dist` artifact. `npm run build:next` verifies the native Next.js build used by Vercel. Provider network calls are mocked in automated tests. A real integration smoke test requires non-production provider credentials.
 
 ## Manual smoke test
 
@@ -127,7 +128,7 @@ Provider network calls are mocked in automated tests. A real integration smoke t
 
 ## Vercel deployment
 
-1. Import this repository into Vercel using the default Next.js settings.
+1. Import this repository into Vercel, keep the Next.js framework preset, and set the build command to `npm run build:next` (the default `build` script is the Sites-compatible vinext build).
 2. Add all environment variables separately for Preview and Production.
 3. Use non-production Supabase, Resend, and Turnstile settings for Preview.
 4. Apply the SQL migration before enabling the public production form.
