@@ -1,7 +1,7 @@
 export const company = {
   name: "NS Elevator",
   introduction:
-    "NS Elevator is being developed as an international, project-led elevator brand focused on clear engineering coordination, considered material choices, and dependable lifecycle support.",
+    "NS Elevator is an elevator manufacturer based in China, offering complete elevator manufacturing, parts machining, and component production. We work with elevator manufacturers, installation contractors, maintenance providers, and distributors to discuss requirements for new installations, modernization, and spare-parts supply. Share your drawings, technical requirements, quantities, and delivery schedule so we can review a suitable manufacturing proposal.",
   positioning: "Engineering vertical movement around the way buildings live.",
   note:
     "Company history, factory capacity, locations, certifications, and operating statistics require owner verification before public launch.",
@@ -10,7 +10,7 @@ export const company = {
     telephone: "+852 70150436",
   },
   zh: {
-    introduction: "NS Elevator 致力于打造面向全球项目的电梯品牌，注重清晰的工程协调、审慎的材质选择与可靠的全生命周期支持。",
+    introduction: "NS Elevator 是一家来自中国的电梯制造企业，提供整机电梯制造、零件加工与配件生产服务。我们面向电梯制造商、安装承包商、维保服务商及经销商，围绕新装、更新改造与备件配套需求开展技术沟通。欢迎提供图纸、技术要求、采购数量及交付计划，共同评估适合您的制造方案。",
     positioning: "围绕建筑的真实使用方式，设计垂直交通。",
     note: "公司历史、生产能力、地点、认证和运营数据将在获得所有者核实后再公开。",
     metrics: [
