@@ -3,7 +3,7 @@ export const siteConfig = {
   legalName: "NS Elevator",
   title: "NS Elevator — Engineering Vertical Movement",
   description:
-    "Project-led elevator systems for residential, commercial, healthcare, hospitality, infrastructure, and industrial buildings.",
+    "NS Elevator provides complete elevator manufacturing, parts machining, and component production for elevator manufacturers, installers, maintenance providers, and distributors.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://ns-elevator.example",
   accent: "#c98b53",
   nav: [

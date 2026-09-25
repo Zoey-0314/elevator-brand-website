@@ -11,7 +11,7 @@ const serviceStages = [
   ["03", "Installation guidance", "Define responsibilities, approved information flow, interfaces with other trades, storage and access needs, site-readiness checks, installation sequence, inspection points, and the boundaries of remote or local support."],
   ["04", "Commissioning", "Prepare a project-specific pathway for functional checks, safety-related verification, defect recording, acceptance responsibilities, operating information, and handover once the actual procedures and applicable requirements are confirmed."],
   ["05", "Maintenance support", "Structure inspection and maintenance needs around equipment configuration, usage intensity, environment, access constraints, record keeping, local service capability, and the owner's operational priorities."],
-  ["06", "Spare parts", "Support traceable identification through equipment references, photographs, part details, quantity, urgency, destination, and verified supply information so requests can be assessed before logistics commitments are made."],
+  ["06", "Parts machining and component manufacturing", "Alongside complete elevator manufacturing, NS Elevator offers parts machining and component production for elevator manufacturers, installers, maintenance providers, and distributors. Share drawings or part references, material and dimensional requirements, quantities, intended application, and delivery needs. We review manufacturing feasibility, interfaces, inspection requirements, and supply scope before confirming a quotation or delivery commitment."],
   ["07", "After-sales technical support", "Keep each issue connected to its equipment record, symptoms, operating context, previous actions, evidence, escalation route, responsibilities, and closure notes throughout the service life."],
 ] as const;
 
@@ -21,7 +21,7 @@ const serviceStagesZh = [
   ["安装指导", "明确各方责任、批准后的信息流、与其他专业的接口、存储和进场需求、现场准备检查、安装顺序、检验节点及远程或当地支持边界。"],
   ["调试", "在实际流程和适用要求确认后，制定功能检查、安全相关验证、问题记录、验收责任、运行资料及交付的项目专属路径。"],
   ["维保支持", "结合设备配置、使用强度、运行环境、通道限制、记录管理、当地服务能力及业主运营重点，规划检查和维护需求。"],
-  ["备品备件", "通过设备编号、照片、零件信息、数量、紧急程度、目的地及经核实的供应信息进行可追溯识别，在作出物流承诺前完成需求评估。"],
+  ["零件加工与配件生产", "除整机电梯制造外，NS Elevator 也为电梯制造商、安装商、维保服务商及经销商提供零件加工与配件生产服务。欢迎提供图纸或零件编号、材质与尺寸要求、采购数量、应用场景及交付需求。我们将在确认报价与交期前，评估加工可行性、装配接口、检验要求及供货范围。"],
   ["售后技术支持", "在设备生命周期内，将每个问题与设备档案、故障表现、运行背景、既往措施、证据、升级路径、责任分工和结案记录保持关联。"],
 ] as const;
 
